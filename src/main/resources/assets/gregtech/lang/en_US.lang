@@ -4090,6 +4090,17 @@ gt.item.compressed_fireclay.tooltip=Brick-shaped
 gt.item.firebrick.name=Firebrick
 gt.item.firebrick.tooltip=Heat resistant
 
+## GTVariantItem PoC
+gt.example_alloy.ingot.name=Example Alloy Ingot
+gt.example_alloy.plate.name=Example Alloy Plate
+gt.example_alloy.dust.name=Example Alloy Dust
+gt.example_alloy.dust.tooltip=A pinch of example dust
+gt.example_alloy.nugget.name=Example Alloy Nugget
+gt.example_alloy.kitchenknife.name=Example Kitchen Knife
+gt.example_alloy.totoro.name=Example Animal
+gt.advanced_alloy.ingot.name=Mixed Metal Ingot
+gt.advanced_alloy.plate.name=Advanced Alloy
+
 ## Shape
 gt.item.shape_empty.name=Empty Shape Plate
 gt.item.shape_empty.tooltip=Raw Plate to make Molds and Extruder Shapes

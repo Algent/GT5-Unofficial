@@ -1,5 +1,7 @@
 package gregtech.common.items;
 
+import gregtech.api.enums.Materials;
+import gregtech.api.enums.OrePrefixes;
 import gregtech.api.enums.TCAspects;
 import gregtech.api.items.GTVariantItem;
 
@@ -21,13 +23,18 @@ import gregtech.api.items.GTVariantItem;
  */
 public final class ExampleAlloy extends GTVariantItem {
 
+    public static ExampleAlloy INSTANCE;
+
     public final Variant ingot;
     public final Variant plate;
     public final Variant dust;
     public final Variant nugget;
+    public final Variant kitchenknife;
+    public final Variant totoro;
 
     public ExampleAlloy() {
         super("example_alloy");
+        INSTANCE = this;
 
         // spotless:off
 
@@ -44,17 +51,29 @@ public final class ExampleAlloy extends GTVariantItem {
                 new TCAspects.TC_AspectStack(TCAspects.METALLUM, 1L),
                 new TCAspects.TC_AspectStack(TCAspects.ORDO, 1L));
 
-        // (3) Lang-key tooltip path: no literal tooltip set here, so the tooltip (if any) comes from the
-        //     gt.example_alloy.dust.tooltip lang key when present; otherwise the item simply has no tooltip line.
+        // (3) Lang-key tooltip path + no-unification: no literal tooltip, so the tooltip comes from the
+        //     gt.example_alloy.dust.tooltip lang key. .noUnify() still registers dustExampleAlloy (recipes can target
+        //     it) but stops this exact dust from being unified into some other mod's dustExampleAlloy.
         dust = add(2, "dust", "Example Alloy Dust")
-            .oreDict("dustExampleAlloy");
+            .oreDict("dustExampleAlloy")
+            .noUnify();
 
         // (4) Texture reuse + furnace fuel: share an existing icon via .texture(), and make it burnable
         //     (read back by GTProxy's fuel handler). The burn value here is purely illustrative.
         nugget = add(3, "nugget", "Example Alloy Nugget")
             .oreDict("nuggetExampleAlloy")
             .texture("dust")   // reuse gt.example_alloy/dust.png instead of needing a nugget.png
-            .burnValue(200);   // smelts exactly one item, like a tiny lump of fuel
+            .burnValue(200);
+
+        // (5) Per-variant stack size: a knife is a single-stack tool, unlike the stackable alloy forms above.
+        kitchenknife = add(4, "kitchenknife", "Example Kitchen Knife")
+            .materialData(OrePrefixes.blade, Materials.Andesite)
+            .maxStackSize(1);
+
+        // (6) Hidden: still obtainable (recipes / get / commands) but kept out of the creative + NEI listing,
+        //     except in dev mode (D1). Use for deprecated or internal metas you must not delete.
+        totoro = add(5, "totoro", "Example Animal")
+            .hidden();
 
         // spotless:on
     }

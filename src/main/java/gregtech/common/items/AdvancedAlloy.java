@@ -29,6 +29,7 @@ public final class AdvancedAlloy extends GTVariantItem {
 
     public AdvancedAlloy() {
         super("advanced_alloy");
+        INSTANCE = this;
 
         // spotless:off
         ingot = add(0, "ingot", "Mixed Metal Ingot")

@@ -75,6 +75,7 @@ import gregtech.api.hazards.HazardProtectionTooltip;
 import gregtech.api.interfaces.IToolStats;
 import gregtech.api.interfaces.IUpdatePlayerMovement;
 import gregtech.api.items.CircuitComponentFakeItem;
+import gregtech.api.items.GTVariantItem;
 import gregtech.api.items.MetaGeneratedItem;
 import gregtech.api.items.MetaGeneratedTool;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
@@ -290,6 +291,8 @@ public class GTClient extends GTProxy {
 
         Textures.ItemIcons.cleanup();
         Textures.BlockIcons.cleanup();
+
+        GTVariantItem.validateLangCoverage(); // dev-mode (D1) warning for variants missing a .name lang entry
     }
 
     @SideOnly(Side.CLIENT)

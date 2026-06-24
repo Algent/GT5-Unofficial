@@ -183,8 +183,8 @@ public class LoaderGTBlockFluid implements Runnable {
         new ItemMagLevHarness();
         MechArmorLoader.run();
         new CircuitComponentFakeItem();
-        new ExampleAlloy(); // POC: GTVariantItem teaching example
-        AdvancedAlloy.INSTANCE = new AdvancedAlloy(); // POC: GTVariantItem real-material demo (claims plateAlloy.HV)
+        new ExampleAlloy(); // POC: GTVariantItem teaching example (self-assigns INSTANCE)
+        new AdvancedAlloy(); // POC: GTVariantItem real-material demo, claims plateAlloy.HV (self-assigns INSTANCE)
 
         // Tiered recipe materials actually appear to be set in MTEBasicMachineWithRecipe, making these
         // unused

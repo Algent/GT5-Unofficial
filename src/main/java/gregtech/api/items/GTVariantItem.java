@@ -1,7 +1,9 @@
 package gregtech.api.items;
 
+import static gregtech.api.enums.GTValues.D1;
 import static gregtech.api.enums.Mods.GregTech;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -22,6 +25,7 @@ import gregtech.api.enums.OrePrefixes;
 import gregtech.api.enums.TCAspects;
 import gregtech.api.interfaces.IItemContainer;
 import gregtech.api.objects.ItemData;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTUtility;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -52,6 +56,9 @@ public abstract class GTVariantItem extends Item {
     /** Forge treats item metadata {@code 32767} as the OreDictionary wildcard, so it can never be a real variant. */
     private static final int OREDICT_WILDCARD = 32767;
 
+    /** Every constructed instance, for cross-cutting passes such as the dev-mode lang-coverage check. */
+    private static final List<GTVariantItem> INSTANCES = new ArrayList<>();
+
     /**
      * Unlocalized base name, e.g. {@code "gt.example_alloy"}. Variant keys are appended:
      * {@code "gt.example_alloy.ingot"}.
@@ -75,6 +82,29 @@ public abstract class GTVariantItem extends Item {
         setMaxDamage(0);
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
         GameRegistry.registerItem(this, mName, GregTech.ID);
+        INSTANCES.add(this);
+    }
+
+    /**
+     * Dev-mode ({@link gregtech.api.enums.GTValues#D1}) check that every registered variant has a translatable
+     * {@code <root>.<key>.name} lang entry, so missing keys surface in the log instead of silently using the hardcoded
+     * English fallback. Run once on the client after languages have loaded (see {@code GTClient#onLoadComplete}); it is
+     * inherently a no-op on the dedicated server, which loads no lang files. Off unless {@code D1}, to avoid log spam.
+     */
+    public static void validateLangCoverage() {
+        if (!D1) return;
+        for (GTVariantItem item : INSTANCES) {
+            for (Variant variant : item.variants.values()) {
+                String key = item.mName + "." + variant.key + ".name";
+                if (!StatCollector.canTranslate(key)) {
+                    GTLog.out.println(
+                        "[GTVariantItem] Missing lang entry " + key
+                            + " (falling back to \""
+                            + variant.englishName
+                            + "\")");
+                }
+            }
+        }
     }
 
     /**
@@ -97,8 +127,19 @@ public abstract class GTVariantItem extends Item {
         return variant;
     }
 
-    /** @return a stack of the given variant metadata, or a stack of an unregistered meta (still valid) if unknown. */
+    /**
+     * @return a stack of the given variant metadata.
+     * @throws IllegalArgumentException if {@code meta} is not a registered variant — this is the construction-time
+     *                                  factory, so an unknown meta is a programming/recipe error and fails loudly. The
+     *                                  render/display paths ({@link #getIconFromDamage},
+     *                                  {@link #getItemStackDisplayName}
+     *                                  etc.) stay lenient so a stale meta in a loaded save degrades instead of
+     *                                  crashing.
+     */
     public ItemStack get(int meta, long amount) {
+        if (!variants.containsKey(meta)) {
+            throw new IllegalArgumentException("No variant registered for meta " + meta + " on " + mName);
+        }
         return new ItemStack(this, (int) amount, meta);
     }
 
@@ -147,8 +188,20 @@ public abstract class GTVariantItem extends Item {
     @Override
     public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
         for (Variant variant : variants.values()) {
+            if (variant.hidden && !D1) continue; // hidden variants stay obtainable but unlisted, except in dev mode
             list.add(get(variant.meta, 1));
         }
+    }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        Variant variant = variants.get(stack.getItemDamage());
+        return variant == null ? 64 : variant.maxStackSize;
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+        return true; // match GTGenericItem: sneak-right-click passes through to the block, like other GT items
     }
 
     @Override
@@ -179,6 +232,8 @@ public abstract class GTVariantItem extends Item {
         private String texture;
         private String englishTooltip;
         private int burnValue;
+        private int maxStackSize = 64;
+        private boolean hidden;
 
         private Variant(int meta, String key, String englishName) {
             this.meta = meta;
@@ -237,6 +292,34 @@ public abstract class GTVariantItem extends Item {
          */
         public Variant burnValue(int ticks) {
             this.burnValue = ticks;
+            return this;
+        }
+
+        /** Maximum stack size for this variant (1..64); defaults to 64. */
+        public Variant maxStackSize(int limit) {
+            if (limit < 1 || limit > 64) {
+                throw new IllegalArgumentException("maxStackSize must be 1..64 for " + mName + "." + key);
+            }
+            this.maxStackSize = limit;
+            return this;
+        }
+
+        /**
+         * Keep this variant out of the creative/NEI listing while leaving it fully obtainable (recipes, {@link #get},
+         * commands). Useful for deprecated or internal metas you must not delete. Still shown in dev mode ({@code D1}).
+         */
+        public Variant hidden() {
+            this.hidden = true;
+            return this;
+        }
+
+        /**
+         * Exclude this variant from OreDict unification, so {@code GTOreDictUnificator.get(...)} never swaps this stack
+         * for another item registered under the same tag. The variant keeps any OreDict tags it registers (recipes can
+         * still target it); it just won't itself be unified away. Mirrors {@code SubTag.NO_UNIFICATION}.
+         */
+        public Variant noUnify() {
+            GTOreDictUnificator.addToBlacklist(get(1));
             return this;
         }
 
