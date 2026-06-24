@@ -86,6 +86,8 @@ import gregtech.common.blocks.BlockSheetMetal;
 import gregtech.common.blocks.BlockStones;
 import gregtech.common.blocks.BlockTintedIndustrialGlass;
 import gregtech.common.blocks.TileEntityOres;
+import gregtech.common.items.AdvancedAlloy;
+import gregtech.common.items.ExampleAlloy;
 import gregtech.common.items.ItemAdvancedSensorCard;
 import gregtech.common.items.ItemDepletedCell;
 import gregtech.common.items.ItemFluidDisplay;
@@ -181,6 +183,8 @@ public class LoaderGTBlockFluid implements Runnable {
         new ItemMagLevHarness();
         MechArmorLoader.run();
         new CircuitComponentFakeItem();
+        new ExampleAlloy(); // POC: GTVariantItem teaching example
+        AdvancedAlloy.INSTANCE = new AdvancedAlloy(); // POC: GTVariantItem real-material demo (claims plateAlloy.HV)
 
         // Tiered recipe materials actually appear to be set in MTEBasicMachineWithRecipe, making these
         // unused

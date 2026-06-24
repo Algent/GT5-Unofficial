@@ -52,7 +52,8 @@ public class LoaderGTOreDictionary implements Runnable {
         GTOreDictUnificator.set(OrePrefixes.bottle, Materials.Water, new ItemStack(Items.potionitem, 1, 0));
 
         GTOreDictUnificator.set(OrePrefixes.plateAlloy, Materials.Iridium, GTModHandler.getIC2Item("iridiumPlate", 1L));
-        GTOreDictUnificator.set(OrePrefixes.plateAlloy, Materials.HV, GTModHandler.getIC2Item("advancedAlloy", 1L));
+        // POC: retired so AdvancedAlloy (GTVariantItem) can claim plateAlloy.HV as the unification target instead.
+        // GTOreDictUnificator.set(OrePrefixes.plateAlloy, Materials.HV, GTModHandler.getIC2Item("advancedAlloy", 1L));
         GTOreDictUnificator.set(OrePrefixes.plateAlloy, Materials.Carbon, GTModHandler.getIC2Item("carbonPlate", 1L));
 
         GTOreDictUnificator.set(OrePrefixes.ore, Materials.Coal, new ItemStack(Blocks.coal_ore, 1));

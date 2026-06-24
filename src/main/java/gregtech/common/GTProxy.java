@@ -130,6 +130,7 @@ import gregtech.api.fluid.GTFluidFactory;
 import gregtech.api.interfaces.IProjectileItem;
 import gregtech.api.interfaces.IToolStats;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import gregtech.api.items.GTVariantItem;
 import gregtech.api.items.MetaGeneratedItem;
 import gregtech.api.items.MetaGeneratedTool;
 import gregtech.api.items.armor.ArmorEventHandlers;
@@ -2130,6 +2131,9 @@ public class GTProxy implements IFuelHandler {
             if (burnValue != null) {
                 burnTime = Math.max(burnTime, burnValue);
             }
+        }
+        if (stack.getItem() instanceof GTVariantItem) {
+            burnTime = Math.max(burnTime, ((GTVariantItem) stack.getItem()).getBurnValue(stack.getItemDamage()));
         }
         final NBTTagCompound nbtTag = stack.getTagCompound();
         if (nbtTag != null) {

@@ -24,6 +24,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTUtility;
+import gregtech.common.items.AdvancedAlloy;
 import ic2.core.Ic2Items;
 
 public class CraftingRecipeLoader implements Runnable {
@@ -766,33 +767,37 @@ public class CraftingRecipeLoader implements Runnable {
         GTLog.out.println("GTMod: Adding Mixed Metal Ingot Recipes.");
         GTModHandler.removeRecipeByOutputDelayed(ItemList.IC2_Mixed_Metal_Ingot.get(1L));
 
+        // GTVariantItem POC: this AnyIron group's output is repointed to the new AdvancedAlloy ingot (bound to
+        // ItemList.AdvancedAlloy_Ingot). The remaining groups below still output the IC2 item, so you can compare
+        // them side by side in NEI. Compressing/bending the IC2 ingot still yields the new AdvancedAlloy plate via
+        // the plateAlloy.HV unification claim.
         GTModHandler.addCraftingRecipe(
-            ItemList.IC2_Mixed_Metal_Ingot.get(1L),
+            ItemList.AdvancedAlloy_Ingot.get(1L),
             bits_no_remove_buffered,
             new Object[] { "X", "Y", "Z", 'X', OrePrefixes.plate.get(Materials.AnyIron), 'Y',
                 OrePrefixes.plate.get(Materials.Bronze), 'Z', OrePrefixes.plate.get(Materials.Tin) });
         GTModHandler.addCraftingRecipe(
-            ItemList.IC2_Mixed_Metal_Ingot.get(1L),
+            ItemList.AdvancedAlloy_Ingot.get(1L),
             bits_no_remove_buffered,
             new Object[] { "X", "Y", "Z", 'X', OrePrefixes.plate.get(Materials.AnyIron), 'Y',
                 OrePrefixes.plate.get(Materials.Bronze), 'Z', OrePrefixes.plate.get(Materials.Zinc) });
         GTModHandler.addCraftingRecipe(
-            ItemList.IC2_Mixed_Metal_Ingot.get(1L),
+            ItemList.AdvancedAlloy_Ingot.get(1L),
             bits_no_remove_buffered,
             new Object[] { "X", "Y", "Z", 'X', OrePrefixes.plate.get(Materials.AnyIron), 'Y',
                 OrePrefixes.plate.get(Materials.Bronze), 'Z', OrePrefixes.plate.get(Materials.Aluminium) });
         GTModHandler.addCraftingRecipe(
-            ItemList.IC2_Mixed_Metal_Ingot.get(1L),
+            ItemList.AdvancedAlloy_Ingot.get(1L),
             bits_no_remove_buffered,
             new Object[] { "X", "Y", "Z", 'X', OrePrefixes.plate.get(Materials.AnyIron), 'Y',
                 OrePrefixes.plate.get(Materials.Brass), 'Z', OrePrefixes.plate.get(Materials.Tin) });
         GTModHandler.addCraftingRecipe(
-            ItemList.IC2_Mixed_Metal_Ingot.get(1L),
+            ItemList.AdvancedAlloy_Ingot.get(1L),
             bits_no_remove_buffered,
             new Object[] { "X", "Y", "Z", 'X', OrePrefixes.plate.get(Materials.AnyIron), 'Y',
                 OrePrefixes.plate.get(Materials.Brass), 'Z', OrePrefixes.plate.get(Materials.Zinc) });
         GTModHandler.addCraftingRecipe(
-            ItemList.IC2_Mixed_Metal_Ingot.get(1L),
+            AdvancedAlloy.INSTANCE.ingot.get(1L),
             bits_no_remove_buffered,
             new Object[] { "X", "Y", "Z", 'X', OrePrefixes.plate.get(Materials.AnyIron), 'Y',
                 OrePrefixes.plate.get(Materials.Brass), 'Z', OrePrefixes.plate.get(Materials.Aluminium) });

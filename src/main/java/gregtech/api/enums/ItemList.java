@@ -176,6 +176,9 @@ public enum ItemList implements IItemContainer {
     // IC2 Replacements
     PadBouncy,
     PadSticky,
+    // GTVariantItem POC: bound from AdvancedAlloy so recipe loaders can reference its variants
+    AdvancedAlloy_Ingot,
+    AdvancedAlloy_Plate,
     FenceIron,
 
     Credit_Copper,
